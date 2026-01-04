@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GSUN | Creative Developer</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <style>
+        /* --- CSS VARIABLES & RESET --- */
+        :root {
+            --bg-color: #050505;
+            --text-main: #ffffff;
+            --text-muted: #a1a1a1;
+            --accent: #7000ff;
+            --accent-glow: rgba(112, 0, 255, 0.6); /* Increased opacity for neon */
+            --card-bg: #111111;
+            --font-main: 'Outfit', sans-serif;
+            --grid-color: rgba(255, 255, 255, 0.05);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: var(--font-main);
+            overflow-x: hidden;
+            cursor: none;
+        }
+
+        /* --- BACKGROUND TEXTURE --- */
+        .bg-grid {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100vh;
+            background-image: 
+                linear-gradient(var(--grid-color) 1px, transparent 1px),
+                linear-gradient(90deg, var(--grid-color) 1px, transparent 1px);
+            background-size: 50px 50px;
+            z-index: -2;
+            mask-image: radial-gradient(circle at center, black 40%, transparent 100%);
+            -webkit-mask-image: radial-gradient(circle at center, black 40%, transparent 100%);
+        }
+
+        /* --- CUSTOM CURSOR --- */
+        .cursor {
+            width: 20px; height: 20px;
+            border: 2px solid var(--accent);
+            border-radius: 50%;
+            position: fixed; pointer-events: none; z-index: 9999;
+            transform: translate(-50%, -50%);
+            transition: width 0.3s, height 0.3s, background-color 0.3s;
+        }
+        .cursor.hovered {
+            width: 50px; height: 50px;
+            background-color: var(--accent-glow);
+            border-color: transparent;
+            mix-blend-mode: screen;
+        }
+
+        /* --- BACKGROUND SHAPES --- */
+        .floating-shape {
+            position: absolute; background: var(--accent);
+            filter: blur(140px); opacity: 0.3; border-radius: 50%;
+            animation: float 10s infinite alternate;
+            z-index: -1;
+        }
+        .shape-1 { width: 600px; height: 600px; top: -10%; left: -10%; }
+        .shape-2 { width: 400px; height: 400px; bottom: 0%; right: -5%; background: #2e006b; }
+        @keyframes float { 100% { transform: translate(40px, 60px); } }
+
+        /* --- NAVIGATION --- */
+        nav {
+            position: fixed; top: 0; width: 100%; padding: 2rem 3rem;
+            display: flex; justify-content: space-between; align-items: center;
+            z-index: 100; backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+        .logo { font-weight: 800; font-size: 1.5rem; letter-spacing: 2px; text-transform: uppercase; }
+        .nav-links a {
+            color: var(--text-main); text-decoration: none; margin-left: 2rem;
+            font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px;
+            position: relative; font-weight: 500;
+        }
+        .nav-links a::after {
+            content: ''; position: absolute; bottom: -5px; left: 0;
+            width: 0%; height: 2px; background: var(--accent); transition: 0.3s;
+        }
+        .nav-links a:hover::after { width: 100%; }
+
+        /* --- CONTAINER & SECTIONS --- */
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 2rem; }
+        section { min-height: 100vh; padding: 140px 0; }
+
+        /* --- HERO SECTION --- */
+        .hero { display: flex; flex-direction: column; justify-content: center; }
+        
+        .status-badge {
+            display: inline-flex; align-items: center; gap: 10px;
+            padding: 8px 16px; background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1); border-radius: 50px;
+            width: fit-content; margin-bottom: 1.5rem;
+            font-size: 0.8rem; letter-spacing: 1px; text-transform: uppercase;
+        }
+        .status-dot { width: 8px; height: 8px; background: #00ff88; border-radius: 50%; box-shadow: 0 0 10px #00ff88; }
+
+        .hero h1 {
+            font-size: 9vw; line-height: 0.85; font-weight: 800;
+            text-transform: uppercase; margin-bottom: 1.5rem;
+        }
+        .hero h1 .line { display: block; overflow: hidden; }
+        .hero h1 span { display: block; transform: translateY(100%); }
+        
+        .outline-text {
+            -webkit-text-stroke: 2px var(--text-main); color: transparent;
+            opacity: 0.5; transition: 0.3s;
+        }
+        .hero:hover .outline-text { opacity: 1; color: transparent; }
+
+        .hero-details { margin-top: 3rem; position: relative; padding-left: 2rem; border-left: 2px solid var(--accent); }
+        .hook-text { font-size: 2rem; font-weight: 500; margin-bottom: 1.5rem; line-height: 1.2; }
+        .bio-text {
+            font-size: 1.1rem; color: var(--text-muted); max-width: 600px;
+            line-height: 1.7; margin-bottom: 2.5rem;
+        }
+        .btn {
+            display: inline-block; padding: 1.2rem 3rem;
+            background: var(--text-main); color: var(--bg-color);
+            text-decoration: none; text-transform: uppercase; letter-spacing: 2px;
+            font-weight: 800; transition: 0.4s; font-size: 0.9rem;
+            clip-path: polygon(0 0, 100% 0, 100% 80%, 95% 100%, 0 100%);
+        }
+        .btn:hover {
+            background: var(--accent); color: white;
+            box-shadow: 5px 5px 0px rgba(255,255,255,0.2);
+            transform: translate(-2px, -2px);
+        }
+
+        /* --- PROJECTS SECTION --- */
+        .project-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+            gap: 4rem; margin-top: 4rem;
+        }
+        .project-card {
+            background: #0f0f0f; border-radius: 0; 
+            border: 1px solid rgba(255,255,255,0.1);
+            display: flex; flex-direction: column;
+            position: relative;
+            transition: 0.3s;
+        }
+        .project-card:hover { border-color: var(--accent); box-shadow: 0 10px 40px -10px rgba(0,0,0,0.8); }
+
+        .card-image {
+            width: 100%; height: 320px; overflow: hidden; 
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            position: relative;
+        }
+        .card-image img {
+            width: 100%; height: 100%; object-fit: cover;
+            transition: transform 0.6s cubic-bezier(0.165, 0.84, 0.44, 1);
+        }
+        .project-card:hover .card-image img { transform: scale(1.05); }
+
+        .card-content { padding: 2.5rem; }
+        
+        .project-meta {
+            display: flex; gap: 1rem; margin-bottom: 1rem;
+        }
+        .meta-tag {
+            font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px;
+            padding: 5px 10px; border: 1px solid rgba(255,255,255,0.2);
+            color: var(--text-muted);
+        }
+
+        .project-card h3 { font-size: 2.5rem; margin-bottom: 1rem; font-weight: 700; line-height: 1; }
+        .project-card p { color: var(--text-muted); font-size: 1rem; line-height: 1.6; margin-bottom: 2rem; }
+        
+        .card-link {
+            display: inline-flex; align-items: center; gap: 10px;
+            color: var(--text-main); text-decoration: none; font-weight: 800;
+            text-transform: uppercase; font-size: 0.9rem; letter-spacing: 2px;
+            padding-bottom: 5px; border-bottom: 2px solid var(--accent);
+        }
+        .card-link:hover { color: var(--accent); }
+
+        /* --- NEON MARQUEE SECTION (UPDATED) --- */
+        .marquee-container { 
+            padding: 3rem 0; 
+            /* Neon Borders */
+            border-top: 2px solid var(--accent); 
+            border-bottom: 2px solid var(--accent); 
+            /* Neon Glow Box */
+            box-shadow: 0 0 15px var(--accent-glow), inset 0 0 15px var(--accent-glow);
+            background: rgba(0,0,0,0.8); /* Slight Transparency */
+            position: relative; z-index: 10;
+        }
+        
+        .marquee-content { display: inline-block; white-space: nowrap; animation: scroll 20s linear infinite; }
+        
+        .skill-item {
+            font-size: 4rem; font-weight: 800; 
+            color: transparent;
+            /* Neon Text Stroke */
+            -webkit-text-stroke: 1px rgba(255, 255, 255, 0.3);
+            margin: 0 3rem;
+            text-transform: uppercase;
+            transition: 0.3s ease;
+            position: relative;
+        }
+        
+        /* Neon Hover Effect */
+        .skill-item:hover { 
+            color: #fff;
+            -webkit-text-stroke: 1px #fff;
+            text-shadow: 
+                0 0 10px var(--accent),
+                0 0 20px var(--accent),
+                0 0 40px var(--accent),
+                0 0 80px var(--accent);
+        }
+
+        /* Ambient Glow for Marquee Items even without hover */
+        .marquee-container:hover .skill-item {
+             -webkit-text-stroke: 1px var(--accent);
+             opacity: 0.5;
+        }
+        .marquee-container:hover .skill-item:hover {
+            opacity: 1;
+        }
+
+        @keyframes scroll { 100% { transform: translateX(-50%); } }
+
+        /* --- CONTACT --- */
+        .contact { text-align: center; border-top: 1px solid rgba(255,255,255,0.1); }
+        .big-contact-text {
+            font-size: 6vw; font-weight: 800; text-transform: uppercase;
+            margin-bottom: 3rem; line-height: 1;
+        }
+        .socials a { 
+            font-size: 2rem; color: var(--text-main); margin: 0 1.5rem; 
+            transition: 0.3s; display: inline-block; background: rgba(255,255,255,0.05);
+            width: 70px; height: 70px; line-height: 70px; border-radius: 50%;
+        }
+        .socials a:hover { background: var(--accent); transform: translateY(-5px); }
+        
+        .contact-info-text { margin-top: 2rem; display: flex; justify-content: center; gap: 3rem; }
+        .info-item { color: var(--text-muted); font-size: 1.2rem; text-decoration: none; font-weight: 500; }
+        .info-item:hover { color: #fff; text-decoration: underline; }
+
+        footer { padding: 3rem; text-align: center; border-top: 1px solid rgba(255,255,255,0.1); color: #666; font-weight: 500; }
+
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 13vw; }
+            .project-grid { grid-template-columns: 1fr; }
+            .nav-links { display: none; }
+            .card-image { height: 220px; }
+            .contact-info-text { flex-direction: column; gap: 1rem; }
+            .big-contact-text { font-size: 12vw; }
+            section { padding: 100px 0; }
+            .shape-1, .shape-2 { opacity: 0.15; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="cursor"></div>
+    <div class="bg-grid"></div> <div class="floating-shape shape-1"></div>
+    <div class="floating-shape shape-2"></div>
+
+    <nav>
+        <div class="logo hover-trigger">GSUN</div>
+        <div class="nav-links">
+            <a href="#about" class="hover-trigger">About</a>
+            <a href="#work" class="hover-trigger">Work</a>
+            <a href="#contact" class="hover-trigger">Contact</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <section class="hero" id="about">
+            <div class="hero-header">
+                <div class="status-badge">
+                    <span class="status-dot"></span> Available for work
+                </div>
+                <h1>
+                    <span class="line"><span class="hero-text">RIDWAN</span></span>
+                    <span class="line"><span class="hero-text">ISLAM</span></span>
+                    <span class="line"><span class="hero-text outline-text">GSUN</span></span>
+                </h1>
+            </div>
+
+            <div class="hero-details">
+                <p class="hook-text">“Designing clarity.<br>Developing trust.”</p>
+                <div class="bio-text">
+                    I’m a UI/UX Designer and Developer crafting refined digital experiences with precision and purpose. I focus on clarity, usability, and detail—transforming complex ideas into polished, high-performing products.
+                </div>
+                <a href="#work" class="btn hover-trigger">View Projects</a>
+            </div>
+        </section>
+    </div>
+
+    <div class="marquee-container">
+        <div class="marquee-content hover-trigger">
+            <span class="skill-item">UI/UX</span><span class="skill-item">FIGMA</span><span class="skill-item">REACT</span>
+            <span class="skill-item">HTML/CSS</span><span class="skill-item">WORDPRESS</span><span class="skill-item">GSAP</span>
+            <span class="skill-item">UI/UX</span><span class="skill-item">FIGMA</span><span class="skill-item">REACT</span>
+            <span class="skill-item">HTML/CSS</span><span class="skill-item">WORDPRESS</span><span class="skill-item">GSAP</span>
+        </div>
+    </div>
+
+    <div class="container">
+        <section id="work">
+            <h2 style="font-size: 4rem; font-weight: 800; text-transform: uppercase; margin-bottom: 3rem; letter-spacing: -1px;">Selected Works</h2>
+            
+            <div class="project-grid">
+                
+                <div class="project-card hover-trigger">
+                    <div class="card-image">
+                        <img src="image_1_16x9.png" alt="Syncperson App">
+                    </div>
+                    <div class="card-content">
+                        <div class="project-meta">
+                            <span class="meta-tag">App Design</span>
+                            <span class="meta-tag">Development</span>
+                        </div>
+                        <h3>Syncperson</h3>
+                        <p>A user-centric mobile application designed for seamless personal synchronization. Built with a focus on intuitive navigation and clean UI patterns.</p>
+                        <a href="https://syncperson.com" target="_blank" class="card-link">Visit Site <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                </div>
+
+                <div class="project-card hover-trigger">
+                    <div class="card-image">
+                        <img src="image_2_16x9.png" alt="Pulsemail Website">
+                    </div>
+                    <div class="card-content">
+                        <div class="project-meta">
+                            <span class="meta-tag">Web Design</span>
+                            <span class="meta-tag">Frontend</span>
+                        </div>
+                        <h3>Pulsemail</h3>
+                        <p>A high-performance, responsive website designed for modern communication needs. Features a polished aesthetic with smooth interactions.</p>
+                        <a href="https://pulsemail.io" target="_blank" class="card-link">Visit Site <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <section id="contact" class="contact">
+            <div class="big-contact-text">Let's Create<br>Something Cool</div>
+            
+            <div class="socials">
+                <a href="#" class="hover-trigger"><i class="fab fa-linkedin-in"></i></a>
+                <a href="#" class="hover-trigger"><i class="fab fa-github"></i></a>
+                <a href="mailto:gsunage@gmail.com" class="hover-trigger"><i class="fas fa-envelope"></i></a>
+                <a href="tel:01515230265" class="hover-trigger"><i class="fas fa-phone"></i></a>
+            </div>
+
+            <div class="contact-info-text">
+                <a href="mailto:gsunage@gmail.com" class="info-item hover-trigger">gsunage@gmail.com</a>
+                <a href="tel:01515230265" class="info-item hover-trigger">+880 1515-230265</a>
+            </div>
+        </section>
+    </div>
+
+    <footer>&copy; 2023 Ridwan Islam Gsun. All Rights Reserved.</footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <script>
+        // Cursor Logic
+        const cursor = document.querySelector('.cursor');
+        document.addEventListener('mousemove', (e) => { 
+            cursor.style.left = e.clientX + 'px'; 
+            cursor.style.top = e.clientY + 'px'; 
+        });
+        document.querySelectorAll('.hover-trigger').forEach(trigger => {
+            trigger.addEventListener('mouseenter', () => cursor.classList.add('hovered'));
+            trigger.addEventListener('mouseleave', () => cursor.classList.remove('hovered'));
+        });
+
+        // GSAP Animations
+        gsap.registerPlugin(ScrollTrigger);
+
+        // Wait for load to prevent layout issues
+        window.addEventListener('load', () => {
+            ScrollTrigger.refresh();
+
+            const tl = gsap.timeline();
+            tl.from('.status-badge', { opacity: 0, y: -20, duration: 1 })
+              .to('.hero-text', { y: 0, duration: 1.2, stagger: 0.15, ease: "power4.out" }, "-=0.8")
+              .from('.hero-details', { opacity: 0, x: -30, duration: 1 }, "-=0.5");
+
+            // Batch animation for cards
+            ScrollTrigger.batch(".project-card", {
+                onEnter: batch => gsap.to(batch, {opacity: 1, y: 0, duration: 0.8, stagger: 0.2, ease: "power2.out"}),
+                start: "top 90%",
+                once: true
+            });
+            
+            // Set initial state
+            gsap.set(".project-card", {y: 60, opacity: 0});
+        });
+    </script>
+</body>
+</html>
