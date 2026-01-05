@@ -14,36 +14,24 @@
             --text-main: #ffffff;
             --text-muted: #a1a1a1;
             --accent: #7000ff;
-            --accent-glow: rgba(112, 0, 255, 0.6); /* Increased opacity for neon */
+            --accent-glow: rgba(112, 0, 255, 0.6);
             --card-bg: #111111;
             --font-main: 'Outfit', sans-serif;
             --grid-color: rgba(255, 255, 255, 0.05);
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        html { scroll-behavior: smooth; }
+        html { scroll-behavior: smooth; overflow-x: hidden; } /* Added overflow-x hidden to prevent side scrolling */
         
         body {
             background-color: var(--bg-color);
             color: var(--text-main);
             font-family: var(--font-main);
             overflow-x: hidden;
-            cursor: none;
+            width: 100%;
         }
 
-        /* --- BACKGROUND TEXTURE --- */
-        .bg-grid {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100vh;
-            background-image: 
-                linear-gradient(var(--grid-color) 1px, transparent 1px),
-                linear-gradient(90deg, var(--grid-color) 1px, transparent 1px);
-            background-size: 50px 50px;
-            z-index: -2;
-            mask-image: radial-gradient(circle at center, black 40%, transparent 100%);
-            -webkit-mask-image: radial-gradient(circle at center, black 40%, transparent 100%);
-        }
-
-        /* --- CUSTOM CURSOR --- */
+        /* --- CUSTOM CURSOR (HIDDEN ON MOBILE) --- */
         .cursor {
             width: 20px; height: 20px;
             border: 2px solid var(--accent);
@@ -55,24 +43,28 @@
         .cursor.hovered {
             width: 50px; height: 50px;
             background-color: var(--accent-glow);
-            border-color: transparent;
             mix-blend-mode: screen;
         }
-
-        /* --- BACKGROUND SHAPES --- */
-        .floating-shape {
-            position: absolute; background: var(--accent);
-            filter: blur(140px); opacity: 0.3; border-radius: 50%;
-            animation: float 10s infinite alternate;
-            z-index: -1;
+        /* Hide cursor on touch devices to prevent lag/bugs */
+        @media (hover: none) {
+            .cursor { display: none; }
         }
-        .shape-1 { width: 600px; height: 600px; top: -10%; left: -10%; }
-        .shape-2 { width: 400px; height: 400px; bottom: 0%; right: -5%; background: #2e006b; }
-        @keyframes float { 100% { transform: translate(40px, 60px); } }
+
+        /* --- BACKGROUND --- */
+        .bg-grid {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100vh;
+            background-image: 
+                linear-gradient(var(--grid-color) 1px, transparent 1px),
+                linear-gradient(90deg, var(--grid-color) 1px, transparent 1px);
+            background-size: 50px 50px;
+            z-index: -2;
+            mask-image: radial-gradient(circle at center, black 40%, transparent 100%);
+            -webkit-mask-image: radial-gradient(circle at center, black 40%, transparent 100%);
+        }
 
         /* --- NAVIGATION --- */
         nav {
-            position: fixed; top: 0; width: 100%; padding: 2rem 3rem;
+            position: fixed; top: 0; width: 100%; padding: 1.5rem 2rem;
             display: flex; justify-content: space-between; align-items: center;
             z-index: 100; backdrop-filter: blur(10px);
             border-bottom: 1px solid rgba(255,255,255,0.05);
@@ -90,12 +82,10 @@
         .nav-links a:hover::after { width: 100%; }
 
         /* --- CONTAINER & SECTIONS --- */
-        .container { max-width: 1200px; margin: 0 auto; padding: 0 2rem; }
-        section { min-height: 100vh; padding: 140px 0; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 1.5rem; }
+        section { min-height: 100vh; padding: 100px 0; display: flex; flex-direction: column; justify-content: center; }
 
         /* --- HERO SECTION --- */
-        .hero { display: flex; flex-direction: column; justify-content: center; }
-        
         .status-badge {
             display: inline-flex; align-items: center; gap: 10px;
             padding: 8px 16px; background: rgba(255,255,255,0.05);
@@ -106,29 +96,31 @@
         .status-dot { width: 8px; height: 8px; background: #00ff88; border-radius: 50%; box-shadow: 0 0 10px #00ff88; }
 
         .hero h1 {
-            font-size: 9vw; line-height: 0.85; font-weight: 800;
+            /* Responsive Font Size using Clamp */
+            font-size: clamp(3rem, 9vw, 8rem);
+            line-height: 0.9; font-weight: 800;
             text-transform: uppercase; margin-bottom: 1.5rem;
         }
         .hero h1 .line { display: block; overflow: hidden; }
         .hero h1 span { display: block; transform: translateY(100%); }
         
         .outline-text {
-            -webkit-text-stroke: 2px var(--text-main); color: transparent;
+            -webkit-text-stroke: 1px var(--text-main); color: transparent;
             opacity: 0.5; transition: 0.3s;
         }
         .hero:hover .outline-text { opacity: 1; color: transparent; }
 
-        .hero-details { margin-top: 3rem; position: relative; padding-left: 2rem; border-left: 2px solid var(--accent); }
-        .hook-text { font-size: 2rem; font-weight: 500; margin-bottom: 1.5rem; line-height: 1.2; }
+        .hero-details { margin-top: 2rem; position: relative; padding-left: 1.5rem; border-left: 2px solid var(--accent); }
+        .hook-text { font-size: clamp(1.5rem, 4vw, 2rem); font-weight: 500; margin-bottom: 1.5rem; line-height: 1.2; }
         .bio-text {
-            font-size: 1.1rem; color: var(--text-muted); max-width: 600px;
+            font-size: 1rem; color: var(--text-muted); max-width: 600px;
             line-height: 1.7; margin-bottom: 2.5rem;
         }
         .btn {
-            display: inline-block; padding: 1.2rem 3rem;
+            display: inline-block; padding: 1rem 2.5rem;
             background: var(--text-main); color: var(--bg-color);
             text-decoration: none; text-transform: uppercase; letter-spacing: 2px;
-            font-weight: 800; transition: 0.4s; font-size: 0.9rem;
+            font-weight: 800; transition: 0.4s; font-size: 0.8rem;
             clip-path: polygon(0 0, 100% 0, 100% 80%, 95% 100%, 0 100%);
         }
         .btn:hover {
@@ -137,10 +129,12 @@
             transform: translate(-2px, -2px);
         }
 
-        /* --- PROJECTS SECTION --- */
+        /* --- PROJECTS SECTION (FIXED) --- */
         .project-grid {
-            display: grid; grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
-            gap: 4rem; margin-top: 4rem;
+            display: grid;
+            /* CHANGED: 500px -> 300px to fit mobile screens */
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem; margin-top: 4rem;
         }
         .project-card {
             background: #0f0f0f; border-radius: 0; 
@@ -148,11 +142,13 @@
             display: flex; flex-direction: column;
             position: relative;
             transition: 0.3s;
+            /* Ensure it is visible by default if JS fails, JS will override this */
+            opacity: 1; 
         }
         .project-card:hover { border-color: var(--accent); box-shadow: 0 10px 40px -10px rgba(0,0,0,0.8); }
 
         .card-image {
-            width: 100%; height: 320px; overflow: hidden; 
+            width: 100%; height: 250px; overflow: hidden; 
             border-bottom: 1px solid rgba(255,255,255,0.1);
             position: relative;
         }
@@ -162,103 +158,84 @@
         }
         .project-card:hover .card-image img { transform: scale(1.05); }
 
-        .card-content { padding: 2.5rem; }
+        .card-content { padding: 2rem; }
         
-        .project-meta {
-            display: flex; gap: 1rem; margin-bottom: 1rem;
-        }
+        .project-meta { display: flex; gap: 0.5rem; margin-bottom: 1rem; flex-wrap: wrap; }
         .meta-tag {
-            font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px;
+            font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1px;
             padding: 5px 10px; border: 1px solid rgba(255,255,255,0.2);
             color: var(--text-muted);
         }
 
-        .project-card h3 { font-size: 2.5rem; margin-bottom: 1rem; font-weight: 700; line-height: 1; }
-        .project-card p { color: var(--text-muted); font-size: 1rem; line-height: 1.6; margin-bottom: 2rem; }
+        .project-card h3 { font-size: 2rem; margin-bottom: 1rem; font-weight: 700; line-height: 1; }
+        .project-card p { color: var(--text-muted); font-size: 0.95rem; line-height: 1.6; margin-bottom: 2rem; }
         
         .card-link {
             display: inline-flex; align-items: center; gap: 10px;
             color: var(--text-main); text-decoration: none; font-weight: 800;
-            text-transform: uppercase; font-size: 0.9rem; letter-spacing: 2px;
+            text-transform: uppercase; font-size: 0.8rem; letter-spacing: 2px;
             padding-bottom: 5px; border-bottom: 2px solid var(--accent);
         }
         .card-link:hover { color: var(--accent); }
 
-        /* --- NEON MARQUEE SECTION (UPDATED) --- */
+        /* --- NEON MARQUEE --- */
         .marquee-container { 
             padding: 3rem 0; 
-            /* Neon Borders */
             border-top: 2px solid var(--accent); 
             border-bottom: 2px solid var(--accent); 
-            /* Neon Glow Box */
             box-shadow: 0 0 15px var(--accent-glow), inset 0 0 15px var(--accent-glow);
-            background: rgba(0,0,0,0.8); /* Slight Transparency */
+            background: rgba(0,0,0,0.8);
             position: relative; z-index: 10;
         }
-        
         .marquee-content { display: inline-block; white-space: nowrap; animation: scroll 20s linear infinite; }
-        
         .skill-item {
-            font-size: 4rem; font-weight: 800; 
-            color: transparent;
-            /* Neon Text Stroke */
+            font-size: clamp(2rem, 5vw, 4rem); /* Responsive text */
+            font-weight: 800; color: transparent;
             -webkit-text-stroke: 1px rgba(255, 255, 255, 0.3);
-            margin: 0 3rem;
-            text-transform: uppercase;
-            transition: 0.3s ease;
-            position: relative;
+            margin: 0 1.5rem; text-transform: uppercase;
+            transition: 0.3s ease; position: relative;
         }
-        
-        /* Neon Hover Effect */
         .skill-item:hover { 
-            color: #fff;
-            -webkit-text-stroke: 1px #fff;
-            text-shadow: 
-                0 0 10px var(--accent),
-                0 0 20px var(--accent),
-                0 0 40px var(--accent),
-                0 0 80px var(--accent);
+            color: #fff; -webkit-text-stroke: 1px #fff;
+            text-shadow: 0 0 10px var(--accent);
         }
-
-        /* Ambient Glow for Marquee Items even without hover */
-        .marquee-container:hover .skill-item {
-             -webkit-text-stroke: 1px var(--accent);
-             opacity: 0.5;
-        }
-        .marquee-container:hover .skill-item:hover {
-            opacity: 1;
-        }
-
         @keyframes scroll { 100% { transform: translateX(-50%); } }
 
         /* --- CONTACT --- */
         .contact { text-align: center; border-top: 1px solid rgba(255,255,255,0.1); }
         .big-contact-text {
-            font-size: 6vw; font-weight: 800; text-transform: uppercase;
+            font-size: clamp(3rem, 10vw, 6rem); /* Responsive */
+            font-weight: 800; text-transform: uppercase;
             margin-bottom: 3rem; line-height: 1;
         }
         .socials a { 
-            font-size: 2rem; color: var(--text-main); margin: 0 1.5rem; 
+            font-size: 1.5rem; color: var(--text-main); margin: 0 10px; 
             transition: 0.3s; display: inline-block; background: rgba(255,255,255,0.05);
-            width: 70px; height: 70px; line-height: 70px; border-radius: 50%;
+            width: 60px; height: 60px; line-height: 60px; border-radius: 50%;
         }
         .socials a:hover { background: var(--accent); transform: translateY(-5px); }
         
-        .contact-info-text { margin-top: 2rem; display: flex; justify-content: center; gap: 3rem; }
-        .info-item { color: var(--text-muted); font-size: 1.2rem; text-decoration: none; font-weight: 500; }
-        .info-item:hover { color: #fff; text-decoration: underline; }
+        .contact-info-text { margin-top: 2rem; display: flex; justify-content: center; gap: 2rem; flex-wrap: wrap;}
+        .info-item { color: var(--text-muted); font-size: 1rem; text-decoration: none; font-weight: 500; }
 
-        footer { padding: 3rem; text-align: center; border-top: 1px solid rgba(255,255,255,0.1); color: #666; font-weight: 500; }
+        footer { padding: 3rem; text-align: center; border-top: 1px solid rgba(255,255,255,0.1); color: #666; font-weight: 500; font-size: 0.8rem; }
 
+        /* --- FLOATING SHAPES --- */
+        .floating-shape {
+            position: absolute; background: var(--accent);
+            filter: blur(100px); opacity: 0.2; border-radius: 50%;
+            animation: float 10s infinite alternate; z-index: -1;
+        }
+        .shape-1 { width: 300px; height: 300px; top: -5%; left: -5%; }
+        .shape-2 { width: 250px; height: 250px; bottom: 5%; right: -5%; background: #2e006b; }
+        @keyframes float { 100% { transform: translate(30px, 30px); } }
+
+        /* --- MOBILE TWEAKS --- */
         @media (max-width: 768px) {
-            .hero h1 { font-size: 13vw; }
-            .project-grid { grid-template-columns: 1fr; }
             .nav-links { display: none; }
-            .card-image { height: 220px; }
-            .contact-info-text { flex-direction: column; gap: 1rem; }
-            .big-contact-text { font-size: 12vw; }
-            section { padding: 100px 0; }
-            .shape-1, .shape-2 { opacity: 0.15; }
+            section { padding: 80px 0; }
+            .hero-details { padding-left: 1rem; }
+            .project-grid { grid-template-columns: 1fr; } /* Force 1 column on mobile */
         }
     </style>
 </head>
@@ -293,7 +270,7 @@
             <div class="hero-details">
                 <p class="hook-text">“Designing clarity.<br>Developing trust.”</p>
                 <div class="bio-text">
-                    I’m a UI/UX Designer and Developer crafting refined digital experiences with precision and purpose. I focus on clarity, usability, and detail—transforming complex ideas into polished, high-performing products.
+                    I’m a UI/UX Designer and Developer crafting refined digital experiences with precision and purpose.
                 </div>
                 <a href="#work" class="btn hover-trigger">View Projects</a>
             </div>
@@ -305,13 +282,12 @@
             <span class="skill-item">UI/UX</span><span class="skill-item">FIGMA</span><span class="skill-item">REACT</span>
             <span class="skill-item">HTML/CSS</span><span class="skill-item">WORDPRESS</span><span class="skill-item">GSAP</span>
             <span class="skill-item">UI/UX</span><span class="skill-item">FIGMA</span><span class="skill-item">REACT</span>
-            <span class="skill-item">HTML/CSS</span><span class="skill-item">WORDPRESS</span><span class="skill-item">GSAP</span>
         </div>
     </div>
 
     <div class="container">
         <section id="work">
-            <h2 style="font-size: 4rem; font-weight: 800; text-transform: uppercase; margin-bottom: 3rem; letter-spacing: -1px;">Selected Works</h2>
+            <h2 style="font-size: clamp(2.5rem, 5vw, 4rem); font-weight: 800; text-transform: uppercase; margin-bottom: 3rem; letter-spacing: -1px;">Selected Works</h2>
             
             <div class="project-grid">
                 
@@ -325,8 +301,8 @@
                             <span class="meta-tag">Development</span>
                         </div>
                         <h3>Syncperson</h3>
-                        <p>A user-centric mobile application designed for seamless personal synchronization. Built with a focus on intuitive navigation and clean UI patterns.</p>
-                        <a href="https://syncperson.com" target="_blank" class="card-link">Visit Site <i class="fas fa-arrow-right"></i></a>
+                        <p>A user-centric mobile application designed for seamless personal synchronization.</p>
+                        <a href="#" class="card-link">Visit Site <i class="fas fa-arrow-right"></i></a>
                     </div>
                 </div>
 
@@ -340,8 +316,8 @@
                             <span class="meta-tag">Frontend</span>
                         </div>
                         <h3>Pulsemail</h3>
-                        <p>A high-performance, responsive website designed for modern communication needs. Features a polished aesthetic with smooth interactions.</p>
-                        <a href="https://pulsemail.io" target="_blank" class="card-link">Visit Site <i class="fas fa-arrow-right"></i></a>
+                        <p>A high-performance, responsive website designed for modern communication needs.</p>
+                        <a href="#" class="card-link">Visit Site <i class="fas fa-arrow-right"></i></a>
                     </div>
                 </div>
 
@@ -365,43 +341,49 @@
         </section>
     </div>
 
-    <footer>&copy; 2023 Ridwan Islam Gsun. All Rights Reserved.</footer>
+    <footer>&copy; 2026 Ridwan Islam Gsun. All Rights Reserved.</footer>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
     <script>
-        // Cursor Logic
-        const cursor = document.querySelector('.cursor');
-        document.addEventListener('mousemove', (e) => { 
-            cursor.style.left = e.clientX + 'px'; 
-            cursor.style.top = e.clientY + 'px'; 
-        });
-        document.querySelectorAll('.hover-trigger').forEach(trigger => {
-            trigger.addEventListener('mouseenter', () => cursor.classList.add('hovered'));
-            trigger.addEventListener('mouseleave', () => cursor.classList.remove('hovered'));
-        });
+        // --- CUSTOM CURSOR LOGIC ---
+        // We check if the device has a "fine" pointer (mouse). 
+        // If it's touch, we skip this to improve performance.
+        if (window.matchMedia("(pointer: fine)").matches) {
+            const cursor = document.querySelector('.cursor');
+            document.addEventListener('mousemove', (e) => { 
+                cursor.style.left = e.clientX + 'px'; 
+                cursor.style.top = e.clientY + 'px'; 
+            });
+            document.querySelectorAll('.hover-trigger').forEach(trigger => {
+                trigger.addEventListener('mouseenter', () => cursor.classList.add('hovered'));
+                trigger.addEventListener('mouseleave', () => cursor.classList.remove('hovered'));
+            });
+        }
 
-        // GSAP Animations
+        // --- GSAP ANIMATIONS ---
         gsap.registerPlugin(ScrollTrigger);
 
-        // Wait for load to prevent layout issues
         window.addEventListener('load', () => {
             ScrollTrigger.refresh();
 
+            // Hero Animation
             const tl = gsap.timeline();
             tl.from('.status-badge', { opacity: 0, y: -20, duration: 1 })
               .to('.hero-text', { y: 0, duration: 1.2, stagger: 0.15, ease: "power4.out" }, "-=0.8")
               .from('.hero-details', { opacity: 0, x: -30, duration: 1 }, "-=0.5");
 
-            // Batch animation for cards
+            // --- FIXED PROJECT CARD ANIMATION FOR MOBILE ---
+            // 1. Set initial state
+            gsap.set(".project-card", {y: 60, opacity: 0});
+
+            // 2. Batch animation with adjusted start point
             ScrollTrigger.batch(".project-card", {
                 onEnter: batch => gsap.to(batch, {opacity: 1, y: 0, duration: 0.8, stagger: 0.2, ease: "power2.out"}),
-                start: "top 90%",
+                // CHANGED: "top 90%" can be too late on small screens. "top 95%" or "top bottom" ensures it triggers.
+                start: "top 95%", 
                 once: true
             });
-            
-            // Set initial state
-            gsap.set(".project-card", {y: 60, opacity: 0});
         });
     </script>
 </body>
